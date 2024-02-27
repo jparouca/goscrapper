@@ -36,20 +36,17 @@ func getHtmlTable(tournament string, writer *csv.Writer) {
 	}
 	fmt.Printf("Scraping %s\n", tournament)
 
-	// Get the region (tournament name)
 	region := tournament
 
 	doc.Find(".wikitable").Each(func(_ int, table *goquery.Selection) {
 		headers := []string{}
 
-		// Skip the first th element
 		table.Find("th").Each(func(i int, th *goquery.Selection) {
 			if i > 0 {
 				headers = append(headers, strings.TrimSpace(th.Text()))
 			}
 		})
 
-		// Add region as the first header
 		headers = append([]string{"Region"}, headers...)
 		writer.Write(headers)
 		fmt.Printf("Headers: %v\n", headers)
@@ -100,7 +97,6 @@ func mergeCSVFiles() {
 
 		reader := csv.NewReader(csvFile)
 
-		// Read and print the headers
 		headers, err := reader.Read()
 		if err != nil {
 			log.Printf("Failed to read header row from %s: %v", file, err)
@@ -127,7 +123,6 @@ func mergeCSVFiles() {
 			}
 			fmt.Printf("Record: %v\n", record)
 			fmt.Printf("Number of Fields: %d\n", len(record))
-			// Append the tournament name to the record
 			record = append([]string{file[:len(file)-len(".csv")]}, record...)
 			if err := writer.Write(record); err != nil {
 				log.Printf("Failed to write record to merged file: %v", err)
